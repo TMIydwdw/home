@@ -1,0 +1,22 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TransactionTitle = void 0;
+var TransactionTitle;
+(function (TransactionTitle) {
+    TransactionTitle["DEPOSIT_FAILED"] = "deposit failed";
+    TransactionTitle["DEPOSIT_SUCCESSFUL"] = "deposit successful";
+    TransactionTitle["FUNDING_FAILED"] = "card funding failed";
+    TransactionTitle["FUNDING_SUCCESSFUL"] = "card funding successful";
+    TransactionTitle["WITHDRAWAL_FAILED"] = "withdrawal failed";
+    TransactionTitle["WITHDRAWAL_SUCCESSFUL"] = "withdrawal successful";
+    TransactionTitle["TRANSFER_SENT"] = "transfer sent";
+    TransactionTitle["TRANSFER_RECEIVED"] = "transfer received";
+    TransactionTitle["TRANSFER_REVERSED"] = "transfer reversed";
+    TransactionTitle["REFERRAL_EARNINGS"] = "referral earnings";
+    TransactionTitle["TRADE_STAKE"] = "trade stake";
+    TransactionTitle["TRADE_SETTLED"] = "trade settled";
+    TransactionTitle["INVESTMENT_PURCHASED"] = "investment purchased";
+    TransactionTitle["INVESTMENT_COMPLETED"] = "investment completed";
+    TransactionTitle["COPY_PURCHASED"] = "copy purchased";
+    TransactionTitle["COPY_COMPLETED"] = "copy completed";
+})(TransactionTitle = exports.TransactionTitle || (exports.TransactionTitle = {}));

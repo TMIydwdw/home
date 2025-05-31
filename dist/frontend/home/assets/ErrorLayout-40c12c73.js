@@ -1,0 +1,1 @@
+import{g as n,q as s,c,a,e,o as _,k as r}from"./index-698e1001.js";const i={},d={class:"section section--content"},m={class:"section__content"};function p(f,l){const o=s("RouterView"),t=r;return _(),c("div",d,[a("div",m,[e(o)]),e(t)])}const v=n(i,[["render",p]]);export{v as default};

@@ -1,0 +1,27 @@
+✔ 16. export all models to begin with a capital letter
+---- 3. add trans ref to all trades and transactions
+✔ 4. make the all files naming convention same
+✔ 5. use thesame patterns in the APIs
+✔ 7. rework on the exception service
+✔ 9. add a toJSON property and an Interface to each models
+✔ 10. make all class methods non arrow functions
+✔ 15. use filter query to find one from another service
+✔ 17. implement all change password as a schema methods
+✔ 18. remove the object suffix from all models
+✔ 21. change validation to schema
+✔ 25. add service async handler and controller async handler
+✔ 26. add count to each service
+✔ 27. store the controllers routes in an array to use in test
+✔ 28. add an assertion to count all the method in a class
+
+29. add a baseService to all services
+30. use service params to all services
+31. add an optional before delete method to the base services
+32. add options params to all service fetch methods
+
+* ASAP
+✔ 1. impliment the forecast min/max daily wait time with the right logic
+
+
+
+    "test": "jest --detectOpenHandles",

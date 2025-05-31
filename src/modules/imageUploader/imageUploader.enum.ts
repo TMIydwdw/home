@@ -1,0 +1,16 @@
+export enum ImageUploaderSizes {
+  ORIGINAL = 'original',
+  ITEM_VIEW = 'item-view',
+  ITEM_HERO = 'item-hero',
+  ITEM_COVER = 'item-cover',
+  ITEM_CARD = 'item-card',
+  ITEM_PROFILE = 'item-profile',
+  COVER_MAIN = 'cover-main',
+  COVER_PROFILE = 'cover-profile',
+  COVER_CARD = 'cover-card',
+  COVER_MENU = 'cover-menu',
+  PROFILE_MAIN = 'profile-main',
+  PROFILE_CARD = 'profile-card',
+  PROFILE_NAV = 'profile-nav',
+  PROFILE_ICON = 'profile-icon',
+}

@@ -1,0 +1,18 @@
+export enum TransactionTitle {
+  DEPOSIT_FAILED = 'deposit failed',
+  DEPOSIT_SUCCESSFUL = 'deposit successful',
+  FUNDING_FAILED = 'card funding failed',
+  FUNDING_SUCCESSFUL = 'card funding successful',
+  WITHDRAWAL_FAILED = 'withdrawal failed',
+  WITHDRAWAL_SUCCESSFUL = 'withdrawal successful',
+  TRANSFER_SENT = 'transfer sent',
+  TRANSFER_RECEIVED = 'transfer received',
+  TRANSFER_REVERSED = 'transfer reversed',
+  REFERRAL_EARNINGS = 'referral earnings',
+  TRADE_STAKE = 'trade stake',
+  TRADE_SETTLED = 'trade settled',
+  INVESTMENT_PURCHASED = 'investment purchased',
+  INVESTMENT_COMPLETED = 'investment completed',
+  COPY_PURCHASED = 'copy purchased',
+  COPY_COMPLETED = 'copy completed',
+}

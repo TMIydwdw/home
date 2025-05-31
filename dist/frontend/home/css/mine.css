@@ -1,0 +1,57 @@
+.modal-overflow {
+  overflow: hidden;
+}
+
+.btn {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: transparent;
+  border-radius: 20px;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border: 2px solid rgba(170, 114, 206, 0.12);
+}
+
+.btn-primary {
+  border-color: #aa72ce;
+}
+
+.btn-secondary {
+  border-color: #227f9e;
+}
+
+.text-center {
+  text-align: center !important;
+}
+.text-gray {
+  color: #939393;
+}
+
+.text-lower {
+  text-transform: lowercase !important;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: normal;
+}
+
+.overflow-hidden {
+  overflow: hidden !important;
+}
+
+#goog-gt-tt,
+.goog-te-spinner-pos {
+  display: none !important;
+}

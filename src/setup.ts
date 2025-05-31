@@ -1,0 +1,343 @@
+import 'reflect-metadata'
+import { Container } from 'typedi'
+import PlanService from '@/modules/plan/plan.service'
+import { IPlanService } from '@/modules/plan/plan.interface'
+import MailOptionService from '@/modules/mailOption/mailOption.service'
+import { IMailOptionService } from '@/modules/mailOption/mailOption.interface'
+import { IMailService } from '@/modules/mail/mail.interface'
+import { IUserService } from '@/modules/user/user.interface'
+import PlanController from '@/modules/plan/plan.controller'
+import UserController from '@/modules/user/user.controller'
+import MailOptionController from '@/modules/mailOption/mailOption.controller'
+import UserService from '@/modules/user/user.service'
+import ServiceToken from '@/core/serviceToken'
+import MailService from '@/modules/mail/mail.service'
+import ConfigController from '@/modules/config/config.controller'
+import { IAuthService } from '@/modules/auth/auth.interface'
+import AuthService from '@/modules/auth/auth.service'
+import AuthController from '@/modules/auth/auth.controller'
+import { IReferralSettingsService } from '@/modules/referralSettings/referralSettings.interface'
+import ReferralSettingsService from '@/modules/referralSettings/referralSettings.service'
+import ReferralSettingsController from '@/modules/referralSettings/referralSettings.controller'
+import { INotificationService } from '@/modules/notification/notification.interface'
+import NotificationService from '@/modules/notification/notification.service'
+import { IReferralService } from '@/modules/referral/referral.interface'
+import ReferralService from '@/modules/referral/referral.service'
+import { IEmailVerificationService } from '@/modules/emailVerification/emailVerification.interface'
+import EmailVerificationService from '@/modules/emailVerification/emailVerification.service'
+import { IResetPasswordService } from '@/modules/resetPassword/resetPassword.interface'
+import ResetPasswordService from '@/modules/resetPassword/resetPassword.service'
+import { ISendMailService } from '@/modules/sendMail/sendMail.interface'
+import SendMailService from '@/modules/sendMail/sendMail.service'
+import SendMailController from '@/modules/sendMail/sendMail.controller'
+import { IActivityService } from '@/modules/activity/activity.interface'
+import ActivityService from '@/modules/activity/activity.service'
+import ReferralController from '@/modules/referral/referral.controller'
+import { ICurrencyService } from '@/modules/currency/currency.interface'
+import CurrencyService from '@/modules/currency/currency.service'
+import CurrencyController from '@/modules/currency/currency.controller'
+import { IDepositMethodService } from '@/modules/depositMethod/depositMethod.interface'
+import DepositMethodService from '@/modules/depositMethod/depositMethod.service'
+import DepositMethodController from '@/modules/depositMethod/depositMethod.controller'
+import { IWithdrawalMethodService } from '@/modules/withdrawalMethod/withdrawalMethod.interface'
+import WithdrawalMethodService from '@/modules/withdrawalMethod/withdrawalMethod.service'
+import WithdrawalMethodController from '@/modules/withdrawalMethod/withdrawalMethod.controller'
+import { ITransactionService } from '@/modules/transaction/transaction.interface'
+import TransactionService from '@/modules/transaction/transaction.service'
+import { IDepositService } from '@/modules/deposit/deposit.interface'
+import DepositService from '@/modules/deposit/deposit.service'
+import DepositController from '@/modules/deposit/deposit.controller'
+import { IWithdrawalService } from '@/modules/withdrawal/withdrawal.interface'
+import WithdrawalService from '@/modules/withdrawal/withdrawal.service'
+import WithdrawalController from '@/modules/withdrawal/withdrawal.controller'
+import ActivityController from '@/modules/activity/activity.controller'
+import TransactionController from '@/modules/transaction/transaction.controller'
+import { ITransferSettingsService } from '@/modules/transferSettings/transferSettings.interface'
+import TransferSettingsService from '@/modules/transferSettings/transferSettings.service'
+import { ITransferService } from '@/modules/transfer/transfer.interface'
+import TransferService from '@/modules/transfer/transfer.service'
+import TransferSettingsController from '@/modules/transferSettings/transferSettings.controller'
+import TransferController from '@/modules/transfer/transfer.controller'
+import { IAssetService } from '@/modules/asset/asset.interface'
+import AssetService from '@/modules/asset/asset.service'
+import AssetController from '@/modules/asset/asset.controller'
+import { IInvestmentService } from '@/modules/investment/investment.interface'
+import InvestmentService from '@/modules/investment/investment.service'
+import InvestmentController from '@/modules/investment/investment.controller'
+import NotificationController from '@/modules/notification/notification.controller'
+import { IPairService } from '@/modules/pair/pair.interface'
+import PairService from '@/modules/pair/pair.service'
+import PairController from '@/modules/pair/pair.controller'
+import { IMathService, IMathUtility } from '@/modules/math/math.interface'
+import MathService from '@/modules/math/math.service'
+import MathUtility from '@/modules/math/math.utility'
+import { IController } from '@/core/utils'
+import { IOtherDepositMethodService } from './modules/otherDepositMethod/otherDepositMethod.interface'
+import OtherDepositMethodService from './modules/otherDepositMethod/otherDepositMethod.service'
+import OtherDepositMethodController from './modules/otherDepositMethod/otherDepositMethod.controller'
+import { IOtherDepositService } from './modules/otherDeposit/otherDeposit.interface'
+import OtherDepositService from './modules/otherDeposit/otherDeposit.service'
+import OtherDepositController from './modules/otherDeposit/otherDeposit.controller'
+import { IOtherWithdrawalService } from './modules/otherWithdrawal/otherWithdrawal.interface'
+import OtherWithdrawalService from './modules/otherWithdrawal/otherWithdrawal.service'
+import { IOtherWithdrawalMethodService } from './modules/otherWithdrawalMethod/otherWithdrawalMethod.interface'
+import OtherWithdrawalMethodService from './modules/otherWithdrawalMethod/otherWithdrawalMethod.service'
+import OtherWithdrawalMethodController from './modules/otherWithdrawalMethod/otherWithdrawalMethod.controller'
+import OtherWithdrawalController from './modules/otherWithdrawal/otherWithdrawal.controller'
+import { IFundingService } from './modules/funding/funding.interface'
+import FundingService from './modules/funding/funding.service'
+import FundingController from './modules/funding/funding.controller'
+import { ICopyTradeService } from './modules/copyTrade/copyTrade.interface'
+import CopyTradeService from './modules/copyTrade/copyTrade.service'
+import CopyTradeController from './modules/copyTrade/copyTrade.controller'
+import CopyService from './modules/copy/copy.service'
+import { ICopyService } from './modules/copy/copy.interface'
+import CopyController from './modules/copy/copy.controller'
+
+export const mathUtility = Container.get<IMathUtility>(MathUtility)
+Container.set<IMathUtility>(ServiceToken.MATH_UTILITY, mathUtility)
+
+export const mathService = Container.get<IMathService>(MathService)
+Container.set<IMathService>(ServiceToken.MATH_SERVICE, mathService)
+
+export const mailOptionService =
+  Container.get<IMailOptionService>(MailOptionService)
+Container.set<IMailOptionService>(
+  ServiceToken.MAIL_OPTION_SERVICE,
+  mailOptionService
+)
+
+export const mailService = Container.get<IMailService>(MailService)
+Container.set<IMailService>(ServiceToken.MAIL_SERVICE, mailService)
+
+export const notificationService =
+  Container.get<INotificationService>(NotificationService)
+Container.set<INotificationService>(
+  ServiceToken.NOTIFICATION_SERVICE,
+  notificationService
+)
+
+export const activityService = Container.get<IActivityService>(ActivityService)
+Container.set<IActivityService>(ServiceToken.ACTIVITY_SERVICE, activityService)
+
+export const resetPasswordService =
+  Container.get<IResetPasswordService>(ResetPasswordService)
+Container.set<IResetPasswordService>(
+  ServiceToken.RESET_PASSWORD_SERVICE,
+  resetPasswordService
+)
+
+export const emailVerificationService =
+  Container.get<IEmailVerificationService>(EmailVerificationService)
+Container.set<IEmailVerificationService>(
+  ServiceToken.EMAIL_VERIFICATION_SERVICE,
+  emailVerificationService
+)
+
+export const currencyService = Container.get<ICurrencyService>(CurrencyService)
+Container.set<ICurrencyService>(ServiceToken.CURRENCY_SERVICE, currencyService)
+
+export const assetService = Container.get<IAssetService>(AssetService)
+Container.set<IAssetService>(ServiceToken.ASSET_SERVICE, assetService)
+
+export const sendMailService = Container.get<ISendMailService>(SendMailService)
+Container.set<ISendMailService>(ServiceToken.SEND_MAIL_SERVICE, sendMailService)
+
+export const pairService = Container.get<IPairService>(PairService)
+Container.set<IPairService>(ServiceToken.PAIR_SERVICE, pairService)
+
+export const planService = Container.get<IPlanService>(PlanService)
+Container.set<IPlanService>(ServiceToken.PLAN_SERVICE, planService)
+
+export const copyTradeService =
+  Container.get<ICopyTradeService>(CopyTradeService)
+Container.set<ICopyTradeService>(
+  ServiceToken.COPY_TRADE_SERVICE,
+  copyTradeService
+)
+
+export const referralSettingsService = Container.get<IReferralSettingsService>(
+  ReferralSettingsService
+)
+Container.set<IReferralSettingsService>(
+  ServiceToken.REFERRAL_SETTINGS_SERVICE,
+  referralSettingsService
+)
+
+export const transferSettingsService = Container.get<ITransferSettingsService>(
+  TransferSettingsService
+)
+Container.set<ITransferSettingsService>(
+  ServiceToken.TRANSFER_SETTINGS_SERVICE,
+  transferSettingsService
+)
+
+export const transactionService =
+  Container.get<ITransactionService>(TransactionService)
+Container.set<ITransactionService>(
+  ServiceToken.TRANSACTION_SERVICE,
+  transactionService
+)
+
+export const depositMethodService =
+  Container.get<IDepositMethodService>(DepositMethodService)
+Container.set<IDepositMethodService>(
+  ServiceToken.DEPOSIT_METHOD_SERVICE,
+  depositMethodService
+)
+
+export const otherDepositMethodService =
+  Container.get<IOtherDepositMethodService>(OtherDepositMethodService)
+Container.set<IOtherDepositMethodService>(
+  ServiceToken.OTHER_DEPOSIT_METHOD_SERVICE,
+  otherDepositMethodService
+)
+
+export const withdrawalMethodService = Container.get<IWithdrawalMethodService>(
+  WithdrawalMethodService
+)
+Container.set<IWithdrawalMethodService>(
+  ServiceToken.WITHDRAWAL_METHOD_SERVICE,
+  withdrawalMethodService
+)
+
+export const otherWithdrawalMethodService =
+  Container.get<IOtherWithdrawalMethodService>(OtherWithdrawalMethodService)
+Container.set<IOtherWithdrawalMethodService>(
+  ServiceToken.OTHER_WITHDRAWAL_METHOD_SERVICE,
+  otherWithdrawalMethodService
+)
+
+export const userService = Container.get<IUserService>(UserService)
+Container.set<IUserService>(ServiceToken.USER_SERVICE, userService)
+
+export const referralService = Container.get<IReferralService>(ReferralService)
+Container.set<IReferralService>(ServiceToken.REFERRAL_SERVICE, referralService)
+
+export const transferService = Container.get<ITransferService>(TransferService)
+Container.set<ITransferService>(ServiceToken.TRANSFER_SERVICE, transferService)
+
+export const depositService = Container.get<IDepositService>(DepositService)
+Container.set<IDepositService>(ServiceToken.DEPOSIT_SERVICE, depositService)
+
+export const fundingService = Container.get<IFundingService>(FundingService)
+Container.set<IFundingService>(ServiceToken.FUNDING_SERVICE, fundingService)
+
+export const otherDepositService =
+  Container.get<IOtherDepositService>(OtherDepositService)
+Container.set<IOtherDepositService>(
+  ServiceToken.OTHER_DEPOSIT_SERVICE,
+  otherDepositService
+)
+
+export const withdrawalService =
+  Container.get<IWithdrawalService>(WithdrawalService)
+Container.set<IWithdrawalService>(
+  ServiceToken.WITHDRAWAL_SERVICE,
+  withdrawalService
+)
+
+export const otherWithdrawalService = Container.get<IOtherWithdrawalService>(
+  OtherWithdrawalService
+)
+Container.set<IOtherWithdrawalService>(
+  ServiceToken.OTHER_WITHDRAWAL_SERVICE,
+  otherWithdrawalService
+)
+
+export const investmentService =
+  Container.get<IInvestmentService>(InvestmentService)
+Container.set<IInvestmentService>(
+  ServiceToken.INVESTMENT_SERVICE,
+  investmentService
+)
+
+export const copyService = Container.get<ICopyService>(CopyService)
+Container.set<ICopyService>(ServiceToken.COPY_SERVICE, copyService)
+
+export const authService = Container.get<IAuthService>(AuthService)
+Container.set<IAuthService>(ServiceToken.AUTH_SERVICE, authService)
+
+export const sendMailController = Container.get<IController>(SendMailController)
+export const authController = Container.get<IController>(AuthController)
+export const userController = Container.get<IController>(UserController)
+export const planController = Container.get<IController>(PlanController)
+export const copyTradeController =
+  Container.get<IController>(CopyTradeController)
+export const mailOptionController =
+  Container.get<IController>(MailOptionController)
+export const configController = Container.get<IController>(ConfigController)
+export const referralSettingsController = Container.get<IController>(
+  ReferralSettingsController
+)
+export const referralController = Container.get<IController>(ReferralController)
+export const currencyController = Container.get<IController>(CurrencyController)
+export const depositMethodController = Container.get<IController>(
+  DepositMethodController
+)
+export const otherDepositMethodController = Container.get<IController>(
+  OtherDepositMethodController
+)
+export const withdrawalMethodController = Container.get<IController>(
+  WithdrawalMethodController
+)
+export const otherWithdrawalMethodController = Container.get<IController>(
+  OtherWithdrawalMethodController
+)
+export const depositController = Container.get<IController>(DepositController)
+export const fundingController = Container.get<IController>(FundingController)
+export const otherDepositController = Container.get<IController>(
+  OtherDepositController
+)
+export const withdrawalController =
+  Container.get<IController>(WithdrawalController)
+export const otherWithdrawalController = Container.get<IController>(
+  OtherWithdrawalController
+)
+export const activityController = Container.get<IController>(ActivityController)
+export const transactionController = Container.get<IController>(
+  TransactionController
+)
+export const transferSettingsController = Container.get<IController>(
+  TransferSettingsController
+)
+export const transferController = Container.get<IController>(TransferController)
+export const assetController = Container.get<IController>(AssetController)
+export const investmentController =
+  Container.get<IController>(InvestmentController)
+export const copyController = Container.get<IController>(CopyController)
+export const notificationController = Container.get<IController>(
+  NotificationController
+)
+export const pairController = Container.get<IController>(PairController)
+
+export const controllers: IController[] = [
+  referralSettingsController,
+  sendMailController,
+  authController,
+  userController,
+  planController,
+  copyTradeController,
+  mailOptionController,
+  configController,
+  referralController,
+  currencyController,
+  depositMethodController,
+  withdrawalMethodController,
+  depositController,
+  fundingController,
+  withdrawalController,
+  activityController,
+  transactionController,
+  transferSettingsController,
+  transferController,
+  assetController,
+  investmentController,
+  copyController,
+  notificationController,
+  pairController,
+  otherDepositMethodController,
+  otherDepositController,
+  otherWithdrawalMethodController,
+  otherWithdrawalController,
+]
