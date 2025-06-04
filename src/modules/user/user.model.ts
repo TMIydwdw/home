@@ -199,6 +199,18 @@ const UserSchema = new Schema<IUser>(
       type: Number,
       default: 0,
     },
+    alertShow: {
+      type: String,
+    },
+    alertColor: {
+      type: String,
+    },
+    alertTitle: {
+      type: String,
+    },
+    alertMessage: {
+      type: String,
+    },
     verified: {
       type: Boolean,
       required: true,

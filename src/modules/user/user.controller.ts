@@ -165,6 +165,13 @@ class UserController extends BaseController implements IController {
       (...params) => this.withdrawal(...params),
     ],
     [
+      'put',
+      `/master${this.path}/alert/:userId`,
+      routePermission(UserRole.ADMIN),
+      schemaValidator(userValidation.alert),
+      (...params) => this.alert(...params),
+    ],
+    [
       'patch',
       `/master${this.path}/fund/:userId`,
       routePermission(UserRole.ADMIN),
@@ -701,11 +708,27 @@ class UserController extends BaseController implements IController {
         withdrawalMinReferral,
         withdrawalMinReferralBalance
       )
-      return new SuccessResponse('Withdrawal details updated successfully', {
+      return new SuccessResponse('Withdrawal settings updated successfully', {
         user,
       }).send(res)
     }
   )
+
+  private alert = asyncHandler(async (req, res): Promise<void | Response> => {
+    const userId = req.params.userId as unknown as ObjectId
+    const { alertShow, alertColor, alertTitle, alertMessage } = req.body
+
+    const user = await this.userService.alert(
+      { _id: userId },
+      alertShow,
+      alertColor,
+      alertTitle,
+      alertMessage
+    )
+    return new SuccessResponse('User notice updated successfully', {
+      user,
+    }).send(res)
+  })
 }
 
 export default UserController

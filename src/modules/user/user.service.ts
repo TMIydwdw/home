@@ -633,6 +633,26 @@ class UserService implements IUserService {
     return user
   }
 
+  public async alert(
+    filter: FilterQuery<IUser>,
+    alertShow: string,
+    alertColor: string,
+    alertTitle: string,
+    alertMessage: string
+  ): Promise<IUserObject> {
+    const user = await this.userModel.findOne(filter)
+    if (!user) throw new NotFoundError('User not found')
+
+    user.alertShow = alertShow
+    user.alertColor = alertColor
+    user.alertTitle = alertTitle
+    user.alertMessage = alertMessage
+
+    await user.save()
+
+    return user
+  }
+
   public async withdrawal(
     filter: FilterQuery<IUser>,
     withdrawalTokenEnabled: string,

@@ -22,7 +22,7 @@ var SiteConstants = /** @class */ (function () {
     SiteConstants.verifyEmailExpiresTime = 1000 * 60 * 60;
     SiteConstants.resetPasswordExpiresTime = 1000 * 60 * 60;
     SiteConstants.safeMiningSignal = 20;
-    SiteConstants.defaultMiningSignal = 35;
+    SiteConstants.defaultMiningSignal = 30;
     return SiteConstants;
 }());
 exports.SiteConstants = SiteConstants;

@@ -233,6 +233,18 @@ var UserSchema = new mongoose_1.Schema({
         type: Number,
         default: 0,
     },
+    alertShow: {
+        type: String,
+    },
+    alertColor: {
+        type: String,
+    },
+    alertTitle: {
+        type: String,
+    },
+    alertMessage: {
+        type: String,
+    },
     verified: {
         type: Boolean,
         required: true,

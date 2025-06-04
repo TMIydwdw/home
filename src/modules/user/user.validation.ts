@@ -145,6 +145,13 @@ const withdrawal = Joi.object({
   withdrawalMinReferralBalance: Joi.number().min(0).required(),
 })
 
+const alert = Joi.object({
+  alertShow: Joi.string().required(),
+  alertColor: Joi.string().required(),
+  alertTitle: Joi.string().required(),
+  alertMessage: Joi.string().required(),
+})
+
 export default {
   updateProfile,
   updateEmail,
@@ -163,4 +170,5 @@ export default {
   linkCard,
   boostSignal,
   withdrawal,
+  alert,
 }

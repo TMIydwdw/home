@@ -69,6 +69,11 @@ export interface IUserObject extends baseObjectInterface {
   withdrawalMinReferral: number
   withdrawalMinReferralBalance: number
 
+  alertShow: string
+  alertColor: string
+  alertTitle: string
+  alertMessage: string
+
   verified: boolean
   referred: ObjectId
   refer: string
@@ -171,6 +176,14 @@ export interface IUserService {
     withdrawalLockMessage: string,
     withdrawalMinReferral: number,
     withdrawalMinReferralBalance: number
+  ): Promise<IUserObject>
+
+  alert(
+    filter: FilterQuery<IUser>,
+    alertShow: string,
+    alertColor: string,
+    alertTitle: string,
+    alertMessage: string
   ): Promise<IUserObject>
 
   updateEmail(filter: FilterQuery<IUser>, email: string): Promise<IUserObject>

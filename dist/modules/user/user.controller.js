@@ -339,6 +339,19 @@ var UserController = /** @class */ (function (_super) {
                 },
             ],
             [
+                'put',
+                "/master".concat(_this.path, "/alert/:userId"),
+                (0, routePermission_1.default)(user_enum_1.UserRole.ADMIN),
+                (0, schemaValidator_1.default)(user_validation_1.default.alert),
+                function () {
+                    var params = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        params[_i] = arguments[_i];
+                    }
+                    return _this.alert.apply(_this, params);
+                },
+            ],
+            [
                 'patch',
                 "/master".concat(_this.path, "/fund/:userId"),
                 (0, routePermission_1.default)(user_enum_1.UserRole.ADMIN),
@@ -928,7 +941,23 @@ var UserController = /** @class */ (function (_super) {
                         return [4 /*yield*/, this.userService.withdrawal({ _id: userId }, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance)];
                     case 1:
                         user = _b.sent();
-                        return [2 /*return*/, new apiResponse_1.SuccessResponse('Withdrawal details updated successfully', {
+                        return [2 /*return*/, new apiResponse_1.SuccessResponse('Withdrawal settings updated successfully', {
+                                user: user,
+                            }).send(res)];
+                }
+            });
+        }); });
+        _this.alert = (0, asyncHandler_1.default)(function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var userId, _a, alertShow, alertColor, alertTitle, alertMessage, user;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        userId = req.params.userId;
+                        _a = req.body, alertShow = _a.alertShow, alertColor = _a.alertColor, alertTitle = _a.alertTitle, alertMessage = _a.alertMessage;
+                        return [4 /*yield*/, this.userService.alert({ _id: userId }, alertShow, alertColor, alertTitle, alertMessage)];
+                    case 1:
+                        user = _b.sent();
+                        return [2 /*return*/, new apiResponse_1.SuccessResponse('User notice updated successfully', {
                                 user: user,
                             }).send(res)];
                 }

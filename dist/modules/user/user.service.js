@@ -623,6 +623,28 @@ var UserService = /** @class */ (function () {
             });
         });
     };
+    UserService.prototype.alert = function (filter, alertShow, alertColor, alertTitle, alertMessage) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.userModel.findOne(filter)];
+                    case 1:
+                        user = _a.sent();
+                        if (!user)
+                            throw new apiError_1.NotFoundError('User not found');
+                        user.alertShow = alertShow;
+                        user.alertColor = alertColor;
+                        user.alertTitle = alertTitle;
+                        user.alertMessage = alertMessage;
+                        return [4 /*yield*/, user.save()];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/, user];
+                }
+            });
+        });
+    };
     UserService.prototype.withdrawal = function (filter, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance) {
         return __awaiter(this, void 0, void 0, function () {
             var user;

@@ -15,5 +15,5 @@ export class SiteConstants {
   static verifyEmailExpiresTime: number = 1000 * 60 * 60
   static resetPasswordExpiresTime: number = 1000 * 60 * 60
   static safeMiningSignal: number = 20
-  static defaultMiningSignal: number = 35
+  static defaultMiningSignal: number = 30
 }

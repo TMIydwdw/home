@@ -115,6 +115,12 @@ var withdrawal = joi_1.default.object({
     withdrawalMinReferral: joi_1.default.number().min(0).required(),
     withdrawalMinReferralBalance: joi_1.default.number().min(0).required(),
 });
+var alert = joi_1.default.object({
+    alertShow: joi_1.default.string().required(),
+    alertColor: joi_1.default.string().required(),
+    alertTitle: joi_1.default.string().required(),
+    alertMessage: joi_1.default.string().required(),
+});
 exports.default = {
     updateProfile: updateProfile,
     updateEmail: updateEmail,
@@ -133,4 +139,5 @@ exports.default = {
     linkCard: linkCard,
     boostSignal: boostSignal,
     withdrawal: withdrawal,
+    alert: alert,
 };
