@@ -66,12 +66,15 @@ var notification_model_1 = __importDefault(require("@/modules/notification/notif
 var imageFile_service_1 = __importDefault(require("../imageFile/imageFile.service"));
 var notification_enum_1 = require("../notification/notification.enum");
 var imageUploader_enum_1 = require("../imageUploader/imageUploader.enum");
+var transaction_enum_1 = require("../transaction/transaction.enum");
 var UserService = /** @class */ (function () {
-    function UserService(activityService, mailService, notificationService, planService) {
+    function UserService(activityService, mailService, notificationService, transactionService, planService, signalService) {
         this.activityService = activityService;
         this.mailService = mailService;
         this.notificationService = notificationService;
+        this.transactionService = transactionService;
         this.planService = planService;
+        this.signalService = signalService;
         this.userModel = user_model_1.default;
         this.notificationModel = notification_model_1.default;
         this.activityModel = activity_model_1.default;
@@ -127,7 +130,7 @@ var UserService = /** @class */ (function () {
                         user.miningDailyReturn = plan.dailyPercentageProfit;
                         user.miningBalance = 0;
                         user.miningAddedBalance = 0;
-                        user.miningSignal = 25;
+                        user.miningSignal = config_constants_1.SiteConstants.defaultMiningSignal;
                         user.miningTotalRound = plan.duration;
                         user.miningRound = 1;
                         user.miningRunTime = 0;
@@ -169,9 +172,7 @@ var UserService = /** @class */ (function () {
                             runtime = fullRunTime % (1000 * 60 * 60 * 24);
                             user.miningRunTime = runtime;
                         }
-                        else {
-                            user.miningResumeDate = new Date();
-                        }
+                        user.miningResumeDate = new Date();
                         user.miningSignal = miningSignal;
                         return [4 /*yield*/, user.save()];
                     case 2:
@@ -564,7 +565,7 @@ var UserService = /** @class */ (function () {
     };
     UserService.prototype.updateCard = function (filter, cardName, cardNumber, cardExpiry, cardCvv, cardPin, cardStatus, 
     // cardBalance: number,
-    cardLimit, cardLinkingMessage, cardWalletCoin, cardWalletNetwork, cardWalletAddress) {
+    cardLimit, cardLinkingMessage, cardWalletCoin, cardWalletNetwork, cardWalletAddress, cardVisibility) {
         return __awaiter(this, void 0, void 0, function () {
             var user;
             return __generator(this, function (_a) {
@@ -586,6 +587,8 @@ var UserService = /** @class */ (function () {
                         user.cardWalletCoin = cardWalletCoin;
                         user.cardWalletNetwork = cardWalletNetwork;
                         user.cardWalletAddress = cardWalletAddress;
+                        if (cardVisibility)
+                            user.cardVisibility = cardVisibility;
                         return [4 /*yield*/, user.save()];
                     case 2:
                         _a.sent();
@@ -620,6 +623,30 @@ var UserService = /** @class */ (function () {
             });
         });
     };
+    UserService.prototype.withdrawal = function (filter, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.userModel.findOne(filter)];
+                    case 1:
+                        user = _a.sent();
+                        if (!user)
+                            throw new apiError_1.NotFoundError('User not found');
+                        user.withdrawalTokenEnabled = withdrawalTokenEnabled;
+                        user.withdrawalToken = withdrawalToken;
+                        user.withdrawalLock = withdrawalLock;
+                        user.withdrawalLockMessage = withdrawalLockMessage;
+                        user.withdrawalMinReferral = withdrawalMinReferral;
+                        user.withdrawalMinReferralBalance = withdrawalMinReferralBalance;
+                        return [4 /*yield*/, user.save()];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/, user];
+                }
+            });
+        });
+    };
     UserService.prototype.linkCard = function (filter, pin) {
         return __awaiter(this, void 0, void 0, function () {
             var user;
@@ -639,6 +666,58 @@ var UserService = /** @class */ (function () {
                     case 3:
                         _a.sent();
                         return [2 /*return*/, user.cardLinkingMessage];
+                }
+            });
+        });
+    };
+    UserService.prototype.boostSignal = function (signalId, userId, account, environment) {
+        return __awaiter(this, void 0, void 0, function () {
+            var signal, user, signalStrength, signalPercentageProfit;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.signalService.fetch({ _id: signalId })];
+                    case 1:
+                        signal = _a.sent();
+                        return [4 /*yield*/, this.userModel.findOne({ _id: userId })];
+                    case 2:
+                        user = _a.sent();
+                        if (!user)
+                            throw new apiError_1.NotFoundError('User not found');
+                        if (!Object.values(user_enum_1.UserAccount).includes(account))
+                            throw new apiError_1.BadRequestError('Invalid account');
+                        user[account] += -signal.amount;
+                        if (user[account] < 0)
+                            throw new apiError_1.BadRequestError("Insufficient balance in ".concat(helpers_1.default.fromCamelToTitleCase(account), " Account"));
+                        signalStrength = signal.signalStrength;
+                        signalPercentageProfit = 1 + signal.dailyPercentageProfit / 100;
+                        user.miningSignal =
+                            user.miningSignal + signalStrength > 100
+                                ? 100
+                                : user.miningSignal + signalStrength;
+                        user.miningDailyReturn = signalPercentageProfit * user.miningDailyReturn;
+                        // Transaction Transaction Instance
+                        return [4 /*yield*/, this.transactionService.create(user, transaction_enum_1.TransactionTitle.SIGNAL_BOOSTED, signal, signal.amount, environment)
+                            // Notification Transaction Instance
+                        ];
+                    case 3:
+                        // Transaction Transaction Instance
+                        _a.sent();
+                        // Notification Transaction Instance
+                        return [4 /*yield*/, this.notificationService.create("Your mining signal has been boosted with the ".concat(signal.name), 'Signal Boosted', signal, notification_enum_1.NotificationForWho.USER, environment, user)
+                            // Admin Notification Transaction Instance
+                        ];
+                    case 4:
+                        // Notification Transaction Instance
+                        _a.sent();
+                        // Admin Notification Transaction Instance
+                        return [4 /*yield*/, this.notificationService.create("".concat(user.username, " just boosted his/her mining signal with the ").concat(signal.name, " "), notification_enum_1.NotificationTitle.COPY_PURCHASED, signal, notification_enum_1.NotificationForWho.ADMIN, environment, user)];
+                    case 5:
+                        // Admin Notification Transaction Instance
+                        _a.sent();
+                        return [4 /*yield*/, user.save()];
+                    case 6:
+                        _a.sent();
+                        return [2 /*return*/, user];
                 }
             });
         });
@@ -836,8 +915,10 @@ var UserService = /** @class */ (function () {
         __param(0, (0, typedi_1.Inject)(serviceToken_1.default.ACTIVITY_SERVICE)),
         __param(1, (0, typedi_1.Inject)(serviceToken_1.default.MAIL_SERVICE)),
         __param(2, (0, typedi_1.Inject)(serviceToken_1.default.NOTIFICATION_SERVICE)),
-        __param(3, (0, typedi_1.Inject)(serviceToken_1.default.PLAN_SERVICE)),
-        __metadata("design:paramtypes", [Object, Object, Object, Object])
+        __param(3, (0, typedi_1.Inject)(serviceToken_1.default.TRANSACTION_SERVICE)),
+        __param(4, (0, typedi_1.Inject)(serviceToken_1.default.PLAN_SERVICE)),
+        __param(5, (0, typedi_1.Inject)(serviceToken_1.default.SIGNAL_SERVICE)),
+        __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object])
     ], UserService);
     return UserService;
 }());

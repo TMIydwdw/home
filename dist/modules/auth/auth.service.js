@@ -141,9 +141,16 @@ var AuthService = /** @class */ (function () {
                             })];
                     case 5:
                         user = _a.sent();
+                        if (!referred) return [3 /*break*/, 7];
+                        referred.referrers.push(user._id);
+                        return [4 /*yield*/, referred.save()];
+                    case 6:
+                        _a.sent();
+                        _a.label = 7;
+                    case 7:
                         this.activityService.create(user, activity_enum_1.ActivityForWho.USER, activity_enum_1.ActivityCategory.PROFILE, 'your account was created');
                         return [4 /*yield*/, this.notificationService.create("A user with the username \"".concat(user.username, "\" just registered to your platform"), notification_enum_1.NotificationTitle.NEW_USER, user, notification_enum_1.NotificationForWho.ADMIN, user_enum_1.UserEnvironment.LIVE)];
-                    case 6:
+                    case 8:
                         _a.sent();
                         if (user.verified) {
                             accessToken = cryptograph_1.default.createToken(user);
@@ -151,7 +158,7 @@ var AuthService = /** @class */ (function () {
                             return [2 /*return*/, { accessToken: accessToken, expiresIn: expiresIn }];
                         }
                         return [4 /*yield*/, this.emailVerification(user)];
-                    case 7: return [2 /*return*/, _a.sent()];
+                    case 9: return [2 /*return*/, _a.sent()];
                 }
             });
         });

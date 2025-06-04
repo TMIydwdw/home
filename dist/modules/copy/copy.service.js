@@ -153,7 +153,7 @@ var CopyService = /** @class */ (function () {
         var _a;
         if (sendNotice === void 0) { sendNotice = true; }
         return __awaiter(this, void 0, void 0, function () {
-            var copy, user, daysRan, balance, account, runTime;
+            var copy, user, runTime, daysRan, balance, account, runTime;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, this.copyModel
@@ -166,16 +166,14 @@ var CopyService = /** @class */ (function () {
                             throw new apiError_1.NotFoundError('Copy not found');
                         copy.status = status;
                         if (!(status === copy_enum_1.CopyStatus.COMPLETED)) return [3 /*break*/, 6];
-                        daysRan = ((copy.runTime + new Date().getTime() - copy.resumeTime.getTime()) /
-                            1000) *
-                            60 *
-                            60 *
-                            24;
+                        runTime = new Date().getTime() - copy.resumeTime.getTime();
+                        copy.runTime += runTime;
+                        daysRan = copy.runTime / (1000 * 60 * 60 * 24);
                         balance = ((((_a = copy.copyTrade) === null || _a === void 0 ? void 0 : _a.dailyPercentageProfit) || 100) *
                             daysRan *
                             copy.amount) /
                             100 +
-                            (copy.amount + copy.extraProfit);
+                            copy.extraProfit;
                         copy.balance = balance;
                         account = copy.account === user_enum_1.UserAccount.DEMO_BALANCE
                             ? user_enum_1.UserAccount.DEMO_BALANCE
@@ -193,7 +191,7 @@ var CopyService = /** @class */ (function () {
                         // Transaction Transaction Instance
                         _b.sent();
                         if (!(copy.environment === user_enum_1.UserEnvironment.LIVE)) return [3 /*break*/, 5];
-                        return [4 /*yield*/, this.referralService.create(referral_enum_1.ReferralTypes.COMPLETED_PACKAGE_EARNINGS, user, balance - copy.amount)];
+                        return [4 /*yield*/, this.referralService.create(referral_enum_1.ReferralTypes.COMPLETED_PACKAGE_EARNINGS, user, balance)];
                     case 4:
                         _b.sent();
                         _b.label = 5;

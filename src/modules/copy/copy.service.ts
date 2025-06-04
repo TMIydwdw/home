@@ -142,19 +142,17 @@ class CopyService implements ICopyService {
     if (status === CopyStatus.COMPLETED) {
       // User Transaction Instance
 
-      const daysRan =
-        ((copy.runTime + new Date().getTime() - copy.resumeTime.getTime()) /
-          1000) *
-        60 *
-        60 *
-        24
+      const runTime = new Date().getTime() - copy.resumeTime.getTime()
+      copy.runTime += runTime
+
+      const daysRan = copy.runTime / (1000 * 60 * 60 * 24)
 
       const balance =
         ((copy.copyTrade?.dailyPercentageProfit || 100) *
           daysRan *
           copy.amount) /
           100 +
-        (copy.amount + copy.extraProfit)
+        copy.extraProfit
 
       copy.balance = balance
 
@@ -183,7 +181,7 @@ class CopyService implements ICopyService {
         await this.referralService.create(
           ReferralTypes.COMPLETED_PACKAGE_EARNINGS,
           user,
-          balance - copy.amount
+          balance
         )
       }
     } else if (status === CopyStatus.SUSPENDED) {

@@ -1,5 +1,6 @@
 import {
   UserAccount,
+  UserEnvironment,
   UserKycVerificationStatus,
   UserLevel,
   UserMiningStatus,
@@ -39,6 +40,7 @@ export interface IUserObject extends baseObjectInterface {
   miningRunTime: number
   miningResumeDate: Date
 
+  cardVisibility: string
   cardName: string
   cardNumber: string
   cardExpiry: string
@@ -60,9 +62,17 @@ export interface IUserObject extends baseObjectInterface {
   cardCountry: string
   cardZip: string
 
+  withdrawalTokenEnabled: string
+  withdrawalToken: string
+  withdrawalLock: string
+  withdrawalLockMessage: string
+  withdrawalMinReferral: number
+  withdrawalMinReferralBalance: number
+
   verified: boolean
   referred: ObjectId
   refer: string
+  referrers: [ObjectId]
   profit: number
   mainBalance: number
   bonusBalance: number
@@ -131,7 +141,8 @@ export interface IUserService {
     cardLinkingMessage: string,
     cardWalletCoin: string,
     cardWalletNetwork: string,
-    cardWalletAddress: string
+    cardWalletAddress: string,
+    cardVisibility?: string
   ): Promise<IUserObject>
 
   physicalCard(
@@ -144,6 +155,23 @@ export interface IUserService {
   ): Promise<IUserObject>
 
   linkCard(filter: FilterQuery<IUser>, pin: string): Promise<string>
+
+  boostSignal(
+    SignalId: ObjectId,
+    userId: ObjectId,
+    account: UserAccount,
+    environment: UserEnvironment
+  ): Promise<IUserObject>
+
+  withdrawal(
+    filter: FilterQuery<IUser>,
+    withdrawalTokenEnabled: string,
+    withdrawalToken: string,
+    withdrawalLock: string,
+    withdrawalLockMessage: string,
+    withdrawalMinReferral: number,
+    withdrawalMinReferralBalance: number
+  ): Promise<IUserObject>
 
   updateEmail(filter: FilterQuery<IUser>, email: string): Promise<IUserObject>
 

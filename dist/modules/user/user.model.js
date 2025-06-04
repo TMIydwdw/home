@@ -156,6 +156,10 @@ var UserSchema = new mongoose_1.Schema({
     miningResumeDate: {
         type: Date,
     },
+    cardVisibility: {
+        type: String,
+        default: 'HIDDEN',
+    },
     cardName: {
         type: String,
     },
@@ -209,6 +213,26 @@ var UserSchema = new mongoose_1.Schema({
     cardZip: {
         type: String,
     },
+    withdrawalTokenEnabled: {
+        type: String,
+    },
+    withdrawalToken: {
+        type: String,
+    },
+    withdrawalLock: {
+        type: String,
+    },
+    withdrawalLockMessage: {
+        type: String,
+    },
+    withdrawalMinReferral: {
+        type: Number,
+        default: 0,
+    },
+    withdrawalMinReferralBalance: {
+        type: Number,
+        default: 0,
+    },
     verified: {
         type: Boolean,
         required: true,
@@ -235,6 +259,10 @@ var UserSchema = new mongoose_1.Schema({
         required: true,
         unique: true,
         trim: true,
+    },
+    referrers: {
+        type: [mongoose_1.Types.ObjectId],
+        default: [],
     },
     profit: {
         type: Number,

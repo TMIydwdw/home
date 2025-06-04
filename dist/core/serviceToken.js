@@ -39,5 +39,6 @@ var ServiceToken;
     ServiceToken["FORECAST_SERVICE"] = "forecastService";
     ServiceToken["COPY_TRADE_SERVICE"] = "copyTradeService";
     ServiceToken["COPY_SERVICE"] = "copyService";
+    ServiceToken["SIGNAL_SERVICE"] = "signalService";
 })(ServiceToken || (ServiceToken = {}));
 exports.default = ServiceToken;

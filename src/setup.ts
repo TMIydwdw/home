@@ -93,6 +93,9 @@ import CopyTradeController from './modules/copyTrade/copyTrade.controller'
 import CopyService from './modules/copy/copy.service'
 import { ICopyService } from './modules/copy/copy.interface'
 import CopyController from './modules/copy/copy.controller'
+import { ISignalService } from './modules/signal/signal.interface'
+import SignalService from './modules/signal/signal.service'
+import SignalController from './modules/signal/signal.controller'
 
 export const mathUtility = Container.get<IMathUtility>(MathUtility)
 Container.set<IMathUtility>(ServiceToken.MATH_UTILITY, mathUtility)
@@ -155,6 +158,9 @@ Container.set<ICopyTradeService>(
   ServiceToken.COPY_TRADE_SERVICE,
   copyTradeService
 )
+
+export const signalService = Container.get<ISignalService>(SignalService)
+Container.set<ISignalService>(ServiceToken.SIGNAL_SERVICE, signalService)
 
 export const referralSettingsService = Container.get<IReferralSettingsService>(
   ReferralSettingsService
@@ -264,6 +270,7 @@ export const userController = Container.get<IController>(UserController)
 export const planController = Container.get<IController>(PlanController)
 export const copyTradeController =
   Container.get<IController>(CopyTradeController)
+export const signalController = Container.get<IController>(SignalController)
 export const mailOptionController =
   Container.get<IController>(MailOptionController)
 export const configController = Container.get<IController>(ConfigController)
@@ -318,6 +325,7 @@ export const controllers: IController[] = [
   userController,
   planController,
   copyTradeController,
+  signalController,
   mailOptionController,
   configController,
   referralController,

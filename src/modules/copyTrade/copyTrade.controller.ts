@@ -41,7 +41,9 @@ class CopyTradeController extends BaseController implements IController {
       'put',
       `/master${this.path}/update/:copyTradeId`,
       routePermission(UserRole.ADMIN),
+      this.imageUploader.setNames([{ name: 'icon', maxCount: 1 }]),
       schemaValidator(validate.update),
+      this.imageUploader.resize(['icon'], CopyTradeService.iconImageSizes),
       (...params) => this.update(...params),
     ],
     [

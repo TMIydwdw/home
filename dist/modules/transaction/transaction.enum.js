@@ -19,4 +19,5 @@ var TransactionTitle;
     TransactionTitle["INVESTMENT_COMPLETED"] = "investment completed";
     TransactionTitle["COPY_PURCHASED"] = "copy purchased";
     TransactionTitle["COPY_COMPLETED"] = "copy completed";
+    TransactionTitle["SIGNAL_BOOSTED"] = "signal boosted";
 })(TransactionTitle = exports.TransactionTitle || (exports.TransactionTitle = {}));

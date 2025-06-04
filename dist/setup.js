@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.withdrawalController = exports.otherDepositController = exports.fundingController = exports.depositController = exports.otherWithdrawalMethodController = exports.withdrawalMethodController = exports.otherDepositMethodController = exports.depositMethodController = exports.currencyController = exports.referralController = exports.referralSettingsController = exports.configController = exports.mailOptionController = exports.copyTradeController = exports.planController = exports.userController = exports.authController = exports.sendMailController = exports.authService = exports.copyService = exports.investmentService = exports.otherWithdrawalService = exports.withdrawalService = exports.otherDepositService = exports.fundingService = exports.depositService = exports.transferService = exports.referralService = exports.userService = exports.otherWithdrawalMethodService = exports.withdrawalMethodService = exports.otherDepositMethodService = exports.depositMethodService = exports.transactionService = exports.transferSettingsService = exports.referralSettingsService = exports.copyTradeService = exports.planService = exports.pairService = exports.sendMailService = exports.assetService = exports.currencyService = exports.emailVerificationService = exports.resetPasswordService = exports.activityService = exports.notificationService = exports.mailService = exports.mailOptionService = exports.mathService = exports.mathUtility = void 0;
-exports.controllers = exports.pairController = exports.notificationController = exports.copyController = exports.investmentController = exports.assetController = exports.transferController = exports.transferSettingsController = exports.transactionController = exports.activityController = exports.otherWithdrawalController = void 0;
+exports.fundingController = exports.depositController = exports.otherWithdrawalMethodController = exports.withdrawalMethodController = exports.otherDepositMethodController = exports.depositMethodController = exports.currencyController = exports.referralController = exports.referralSettingsController = exports.configController = exports.mailOptionController = exports.signalController = exports.copyTradeController = exports.planController = exports.userController = exports.authController = exports.sendMailController = exports.authService = exports.copyService = exports.investmentService = exports.otherWithdrawalService = exports.withdrawalService = exports.otherDepositService = exports.fundingService = exports.depositService = exports.transferService = exports.referralService = exports.userService = exports.otherWithdrawalMethodService = exports.withdrawalMethodService = exports.otherDepositMethodService = exports.depositMethodService = exports.transactionService = exports.transferSettingsService = exports.referralSettingsService = exports.signalService = exports.copyTradeService = exports.planService = exports.pairService = exports.sendMailService = exports.assetService = exports.currencyService = exports.emailVerificationService = exports.resetPasswordService = exports.activityService = exports.notificationService = exports.mailService = exports.mailOptionService = exports.mathService = exports.mathUtility = void 0;
+exports.controllers = exports.pairController = exports.notificationController = exports.copyController = exports.investmentController = exports.assetController = exports.transferController = exports.transferSettingsController = exports.transactionController = exports.activityController = exports.otherWithdrawalController = exports.withdrawalController = exports.otherDepositController = void 0;
 require("reflect-metadata");
 var typedi_1 = require("typedi");
 var plan_service_1 = __importDefault(require("@/modules/plan/plan.service"));
@@ -68,6 +68,8 @@ var copyTrade_service_1 = __importDefault(require("./modules/copyTrade/copyTrade
 var copyTrade_controller_1 = __importDefault(require("./modules/copyTrade/copyTrade.controller"));
 var copy_service_1 = __importDefault(require("./modules/copy/copy.service"));
 var copy_controller_1 = __importDefault(require("./modules/copy/copy.controller"));
+var signal_service_1 = __importDefault(require("./modules/signal/signal.service"));
+var signal_controller_1 = __importDefault(require("./modules/signal/signal.controller"));
 exports.mathUtility = typedi_1.Container.get(math_utility_1.default);
 typedi_1.Container.set(serviceToken_1.default.MATH_UTILITY, exports.mathUtility);
 exports.mathService = typedi_1.Container.get(math_service_1.default);
@@ -96,6 +98,8 @@ exports.planService = typedi_1.Container.get(plan_service_1.default);
 typedi_1.Container.set(serviceToken_1.default.PLAN_SERVICE, exports.planService);
 exports.copyTradeService = typedi_1.Container.get(copyTrade_service_1.default);
 typedi_1.Container.set(serviceToken_1.default.COPY_TRADE_SERVICE, exports.copyTradeService);
+exports.signalService = typedi_1.Container.get(signal_service_1.default);
+typedi_1.Container.set(serviceToken_1.default.SIGNAL_SERVICE, exports.signalService);
 exports.referralSettingsService = typedi_1.Container.get(referralSettings_service_1.default);
 typedi_1.Container.set(serviceToken_1.default.REFERRAL_SETTINGS_SERVICE, exports.referralSettingsService);
 exports.transferSettingsService = typedi_1.Container.get(transferSettings_service_1.default);
@@ -137,6 +141,7 @@ exports.authController = typedi_1.Container.get(auth_controller_1.default);
 exports.userController = typedi_1.Container.get(user_controller_1.default);
 exports.planController = typedi_1.Container.get(plan_controller_1.default);
 exports.copyTradeController = typedi_1.Container.get(copyTrade_controller_1.default);
+exports.signalController = typedi_1.Container.get(signal_controller_1.default);
 exports.mailOptionController = typedi_1.Container.get(mailOption_controller_1.default);
 exports.configController = typedi_1.Container.get(config_controller_1.default);
 exports.referralSettingsController = typedi_1.Container.get(referralSettings_controller_1.default);
@@ -167,6 +172,7 @@ exports.controllers = [
     exports.userController,
     exports.planController,
     exports.copyTradeController,
+    exports.signalController,
     exports.mailOptionController,
     exports.configController,
     exports.referralController,

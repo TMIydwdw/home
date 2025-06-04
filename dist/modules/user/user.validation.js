@@ -48,6 +48,7 @@ var updateCard = joi_1.default.object({
     // cardWalletCoin: Joi.string().required(),
     // cardWalletNetwork: Joi.string().required(),
     // cardWalletAddress: Joi.string().required(),
+    cardVisibility: joi_1.default.string().allow('', null),
 });
 var linkCard = joi_1.default.object({
     pin: joi_1.default.string().required(),
@@ -58,6 +59,13 @@ var physicalCard = joi_1.default.object({
     cardState: joi_1.default.string().required(),
     cardCountry: joi_1.default.string().required(),
     cardZip: joi_1.default.string().required(),
+});
+var boostSignal = joi_1.default.object({
+    signalId: joi_1.default.string().trim().required(),
+    account: joi_1.default.string()
+        .trim()
+        .valid(user_enum_1.UserAccount.MAIN_BALANCE, user_enum_1.UserAccount.REFERRAL_BALANCE, user_enum_1.UserAccount.BONUS_BALANCE)
+        .required(),
 });
 var updateStatus = joi_1.default.object({
     status: (_c = joi_1.default.string()
@@ -99,6 +107,14 @@ var updateMiningStatus = joi_1.default.object({
 var fundMining = joi_1.default.object({
     amount: joi_1.default.number().required(),
 });
+var withdrawal = joi_1.default.object({
+    withdrawalTokenEnabled: joi_1.default.string().required(),
+    withdrawalToken: joi_1.default.string().required(),
+    withdrawalLock: joi_1.default.string().required(),
+    withdrawalLockMessage: joi_1.default.string().required(),
+    withdrawalMinReferral: joi_1.default.number().min(0).required(),
+    withdrawalMinReferralBalance: joi_1.default.number().min(0).required(),
+});
 exports.default = {
     updateProfile: updateProfile,
     updateEmail: updateEmail,
@@ -115,4 +131,6 @@ exports.default = {
     updateMiningStatus: updateMiningStatus,
     fundMining: fundMining,
     linkCard: linkCard,
+    boostSignal: boostSignal,
+    withdrawal: withdrawal,
 };

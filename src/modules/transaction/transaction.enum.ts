@@ -15,4 +15,5 @@ export enum TransactionTitle {
   INVESTMENT_COMPLETED = 'investment completed',
   COPY_PURCHASED = 'copy purchased',
   COPY_COMPLETED = 'copy completed',
+  SIGNAL_BOOSTED = 'signal boosted',
 }

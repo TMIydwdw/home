@@ -205,6 +205,19 @@ var UserController = /** @class */ (function (_super) {
                 },
             ],
             [
+                'patch',
+                "".concat(_this.path, "/boost-signal"),
+                (0, routePermission_1.default)(user_enum_1.UserRole.USER),
+                (0, schemaValidator_1.default)(user_validation_1.default.boostSignal),
+                function () {
+                    var params = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        params[_i] = arguments[_i];
+                    }
+                    return _this.boostSignal(user_enum_1.UserEnvironment.LIVE).apply(void 0, params);
+                },
+            ],
+            [
                 'put',
                 "".concat(_this.path, "/start-mining"),
                 (0, routePermission_1.default)(user_enum_1.UserRole.USER),
@@ -310,6 +323,19 @@ var UserController = /** @class */ (function (_super) {
                         params[_i] = arguments[_i];
                     }
                     return _this.fundMining.apply(_this, params);
+                },
+            ],
+            [
+                'put',
+                "/master".concat(_this.path, "/withdrawal/:userId"),
+                (0, routePermission_1.default)(user_enum_1.UserRole.ADMIN),
+                (0, schemaValidator_1.default)(user_validation_1.default.withdrawal),
+                function () {
+                    var params = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        params[_i] = arguments[_i];
+                    }
+                    return _this.withdrawal.apply(_this, params);
                 },
             ],
             [
@@ -552,15 +578,15 @@ var UserController = /** @class */ (function (_super) {
         _this.getUpdateCard = function (body, params) { return __awaiter(_this, void 0, void 0, function () {
             var cardName, cardNumber, cardExpiry, cardCvv, cardPin, cardStatus, 
             // cardBalance,
-            cardLimit, cardLinkingMessage, cardWalletCoin, cardWalletNetwork, cardWalletAddress, userId, user;
+            cardLimit, cardLinkingMessage, cardWalletCoin, cardWalletNetwork, cardWalletAddress, cardVisibility, userId, user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        cardName = body.cardName, cardNumber = body.cardNumber, cardExpiry = body.cardExpiry, cardCvv = body.cardCvv, cardPin = body.cardPin, cardStatus = body.cardStatus, cardLimit = body.cardLimit, cardLinkingMessage = body.cardLinkingMessage, cardWalletCoin = body.cardWalletCoin, cardWalletNetwork = body.cardWalletNetwork, cardWalletAddress = body.cardWalletAddress;
+                        cardName = body.cardName, cardNumber = body.cardNumber, cardExpiry = body.cardExpiry, cardCvv = body.cardCvv, cardPin = body.cardPin, cardStatus = body.cardStatus, cardLimit = body.cardLimit, cardLinkingMessage = body.cardLinkingMessage, cardWalletCoin = body.cardWalletCoin, cardWalletNetwork = body.cardWalletNetwork, cardWalletAddress = body.cardWalletAddress, cardVisibility = body.cardVisibility;
                         userId = params.userId;
                         return [4 /*yield*/, this.userService.updateCard({ _id: userId }, cardName, cardNumber, cardExpiry, cardCvv, cardPin, cardStatus, 
                             // cardBalance,
-                            cardLimit, cardLinkingMessage, cardWalletCoin, cardWalletNetwork, cardWalletAddress)];
+                            cardLimit, cardLinkingMessage, cardWalletCoin, cardWalletNetwork, cardWalletAddress, cardVisibility)];
                     case 1:
                         user = _a.sent();
                         return [2 /*return*/, user];
@@ -655,6 +681,24 @@ var UserController = /** @class */ (function (_super) {
                 }
             });
         }); });
+        _this.boostSignal = function (environment) {
+            return (0, asyncHandler_1.default)(function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, account, signalId, userId, user;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = req.body, account = _a.account, signalId = _a.signalId;
+                            userId = req.user._id;
+                            return [4 /*yield*/, this.userService.boostSignal(signalId, userId, account, environment)];
+                        case 1:
+                            user = _b.sent();
+                            return [2 /*return*/, new apiResponse_1.SuccessResponse('Signal boosted successfully', {
+                                    user: user,
+                                }).send(res)];
+                    }
+                });
+            }); });
+        };
         _this.updateEmail = function (byAdmin) {
             return (0, asyncHandler_1.default)(function (req, res) { return __awaiter(_this, void 0, void 0, function () {
                 var userId, email, user;
@@ -869,6 +913,22 @@ var UserController = /** @class */ (function (_super) {
                     case 1:
                         user = _a.sent();
                         return [2 /*return*/, new apiResponse_1.SuccessResponse('Mining funded successfully', {
+                                user: user,
+                            }).send(res)];
+                }
+            });
+        }); });
+        _this.withdrawal = (0, asyncHandler_1.default)(function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var userId, _a, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance, user;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        userId = req.params.userId;
+                        _a = req.body, withdrawalTokenEnabled = _a.withdrawalTokenEnabled, withdrawalToken = _a.withdrawalToken, withdrawalLock = _a.withdrawalLock, withdrawalLockMessage = _a.withdrawalLockMessage, withdrawalMinReferral = _a.withdrawalMinReferral, withdrawalMinReferralBalance = _a.withdrawalMinReferralBalance;
+                        return [4 /*yield*/, this.userService.withdrawal({ _id: userId }, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance)];
+                    case 1:
+                        user = _b.sent();
+                        return [2 /*return*/, new apiResponse_1.SuccessResponse('Withdrawal details updated successfully', {
                                 user: user,
                             }).send(res)];
                 }

@@ -55,6 +55,7 @@ const updateCard = Joi.object({
   // cardWalletCoin: Joi.string().required(),
   // cardWalletNetwork: Joi.string().required(),
   // cardWalletAddress: Joi.string().required(),
+  cardVisibility: Joi.string().allow('', null),
 })
 
 const linkCard = Joi.object({
@@ -67,6 +68,18 @@ const physicalCard = Joi.object({
   cardState: Joi.string().required(),
   cardCountry: Joi.string().required(),
   cardZip: Joi.string().required(),
+})
+
+const boostSignal = Joi.object({
+  signalId: Joi.string().trim().required(),
+  account: Joi.string()
+    .trim()
+    .valid(
+      UserAccount.MAIN_BALANCE,
+      UserAccount.REFERRAL_BALANCE,
+      UserAccount.BONUS_BALANCE
+    )
+    .required(),
 })
 
 const updateStatus = Joi.object({
@@ -123,6 +136,15 @@ const fundMining = Joi.object({
   amount: Joi.number().required(),
 })
 
+const withdrawal = Joi.object({
+  withdrawalTokenEnabled: Joi.string().required(),
+  withdrawalToken: Joi.string().required(),
+  withdrawalLock: Joi.string().required(),
+  withdrawalLockMessage: Joi.string().required(),
+  withdrawalMinReferral: Joi.number().min(0).required(),
+  withdrawalMinReferralBalance: Joi.number().min(0).required(),
+})
+
 export default {
   updateProfile,
   updateEmail,
@@ -139,4 +161,6 @@ export default {
   updateMiningStatus,
   fundMining,
   linkCard,
+  boostSignal,
+  withdrawal,
 }

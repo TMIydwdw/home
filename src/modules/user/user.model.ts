@@ -122,6 +122,10 @@ const UserSchema = new Schema<IUser>(
     miningResumeDate: {
       type: Date,
     },
+    cardVisibility: {
+      type: String,
+      default: 'HIDDEN',
+    },
     cardName: {
       type: String,
     },
@@ -175,6 +179,26 @@ const UserSchema = new Schema<IUser>(
     cardZip: {
       type: String,
     },
+    withdrawalTokenEnabled: {
+      type: String,
+    },
+    withdrawalToken: {
+      type: String,
+    },
+    withdrawalLock: {
+      type: String,
+    },
+    withdrawalLockMessage: {
+      type: String,
+    },
+    withdrawalMinReferral: {
+      type: Number,
+      default: 0,
+    },
+    withdrawalMinReferralBalance: {
+      type: Number,
+      default: 0,
+    },
     verified: {
       type: Boolean,
       required: true,
@@ -201,6 +225,10 @@ const UserSchema = new Schema<IUser>(
       required: true,
       unique: true,
       trim: true,
+    },
+    referrers: {
+      type: [Types.ObjectId],
+      default: [],
     },
     profit: {
       type: Number,

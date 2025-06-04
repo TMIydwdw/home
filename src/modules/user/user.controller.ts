@@ -85,6 +85,13 @@ class UserController extends BaseController implements IController {
       (...params) => this.physicalCard(...params),
     ],
     [
+      'patch',
+      `${this.path}/boost-signal`,
+      routePermission(UserRole.USER),
+      schemaValidator(userValidation.boostSignal),
+      (...params) => this.boostSignal(UserEnvironment.LIVE)(...params),
+    ],
+    [
       'put',
       `${this.path}/start-mining`,
       routePermission(UserRole.USER),
@@ -149,6 +156,13 @@ class UserController extends BaseController implements IController {
       routePermission(UserRole.ADMIN),
       schemaValidator(userValidation.fundMining),
       (...params) => this.fundMining(...params),
+    ],
+    [
+      'put',
+      `/master${this.path}/withdrawal/:userId`,
+      routePermission(UserRole.ADMIN),
+      schemaValidator(userValidation.withdrawal),
+      (...params) => this.withdrawal(...params),
     ],
     [
       'patch',
@@ -343,6 +357,7 @@ class UserController extends BaseController implements IController {
       cardWalletCoin,
       cardWalletNetwork,
       cardWalletAddress,
+      cardVisibility,
     } = body
     const userId = params.userId as unknown as ObjectId
     const user = await this.userService.updateCard(
@@ -358,7 +373,8 @@ class UserController extends BaseController implements IController {
       cardLinkingMessage,
       cardWalletCoin,
       cardWalletNetwork,
-      cardWalletAddress
+      cardWalletAddress,
+      cardVisibility
     )
 
     return user
@@ -456,6 +472,22 @@ class UserController extends BaseController implements IController {
       return new InfoResponse(message, {}).send(res)
     }
   )
+
+  private boostSignal = (environment: UserEnvironment) =>
+    asyncHandler(async (req, res): Promise<Response | void> => {
+      const { account, signalId } = req.body
+      const userId = req.user._id
+      const user = await this.userService.boostSignal(
+        signalId as unknown as ObjectId,
+        userId,
+        account,
+        environment
+      )
+
+      return new SuccessResponse('Signal boosted successfully', {
+        user,
+      }).send(res)
+    })
 
   private updateEmail = (byAdmin: boolean) =>
     asyncHandler(async (req, res): Promise<void | Response> => {
@@ -643,6 +675,33 @@ class UserController extends BaseController implements IController {
 
       const user = await this.userService.fundMining({ _id: userId }, amount)
       return new SuccessResponse('Mining funded successfully', {
+        user,
+      }).send(res)
+    }
+  )
+
+  private withdrawal = asyncHandler(
+    async (req, res): Promise<void | Response> => {
+      const userId = req.params.userId as unknown as ObjectId
+      const {
+        withdrawalTokenEnabled,
+        withdrawalToken,
+        withdrawalLock,
+        withdrawalLockMessage,
+        withdrawalMinReferral,
+        withdrawalMinReferralBalance,
+      } = req.body
+
+      const user = await this.userService.withdrawal(
+        { _id: userId },
+        withdrawalTokenEnabled,
+        withdrawalToken,
+        withdrawalLock,
+        withdrawalLockMessage,
+        withdrawalMinReferral,
+        withdrawalMinReferralBalance
+      )
+      return new SuccessResponse('Withdrawal details updated successfully', {
         user,
       }).send(res)
     }

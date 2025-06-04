@@ -36,6 +36,7 @@ enum ServiceToken {
   FORECAST_SERVICE = 'forecastService',
   COPY_TRADE_SERVICE = 'copyTradeService',
   COPY_SERVICE = 'copyService',
+  SIGNAL_SERVICE = 'signalService',
 }
 
 export default ServiceToken

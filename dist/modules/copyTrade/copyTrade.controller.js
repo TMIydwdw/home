@@ -118,7 +118,9 @@ var CopyTradeController = /** @class */ (function (_super) {
                 'put',
                 "/master".concat(_this.path, "/update/:copyTradeId"),
                 (0, routePermission_1.default)(user_enum_1.UserRole.ADMIN),
+                _this.imageUploader.setNames([{ name: 'icon', maxCount: 1 }]),
                 (0, schemaValidator_1.default)(copyTrade_validation_1.default.update),
+                _this.imageUploader.resize(['icon'], copyTrade_service_1.default.iconImageSizes),
                 function () {
                     var params = [];
                     for (var _i = 0; _i < arguments.length; _i++) {

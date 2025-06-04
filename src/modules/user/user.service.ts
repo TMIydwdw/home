@@ -38,6 +38,9 @@ import {
 } from '../notification/notification.enum'
 import { ImageUploaderSizes } from '../imageUploader/imageUploader.enum'
 import { IPlanService } from '../plan/plan.interface'
+import { ISignalService } from '../signal/signal.interface'
+import { ITransactionService } from '../transaction/transaction.interface'
+import { TransactionTitle } from '../transaction/transaction.enum'
 
 @Service()
 class UserService implements IUserService {
@@ -58,8 +61,11 @@ class UserService implements IUserService {
     @Inject(ServiceToken.MAIL_SERVICE) private mailService: IMailService,
     @Inject(ServiceToken.NOTIFICATION_SERVICE)
     private notificationService: INotificationService,
+    @Inject(ServiceToken.TRANSACTION_SERVICE)
+    private transactionService: ITransactionService,
     @Inject(ServiceToken.PLAN_SERVICE)
-    private planService: IPlanService
+    private planService: IPlanService,
+    @Inject(ServiceToken.SIGNAL_SERVICE) private signalService: ISignalService
   ) {}
 
   private async setFund(
@@ -118,7 +124,7 @@ class UserService implements IUserService {
     user.miningDailyReturn = plan.dailyPercentageProfit
     user.miningBalance = 0
     user.miningAddedBalance = 0
-    user.miningSignal = 25
+    user.miningSignal = SiteConstants.defaultMiningSignal
     user.miningTotalRound = plan.duration
     user.miningRound = 1
     user.miningRunTime = 0
@@ -176,10 +182,9 @@ class UserService implements IUserService {
       const runtime = fullRunTime % (1000 * 60 * 60 * 24)
 
       user.miningRunTime = runtime
-    } else {
-      user.miningResumeDate = new Date()
     }
 
+    user.miningResumeDate = new Date()
     user.miningSignal = miningSignal
 
     await user.save()
@@ -572,7 +577,8 @@ class UserService implements IUserService {
     cardLinkingMessage: string,
     cardWalletCoin: string,
     cardWalletNetwork: string,
-    cardWalletAddress: string
+    cardWalletAddress: string,
+    cardVisibility?: string
   ): Promise<IUserObject> {
     const user = await this.userModel.findOne(filter)
     if (!user) throw new NotFoundError('User not found')
@@ -589,6 +595,8 @@ class UserService implements IUserService {
     user.cardWalletCoin = cardWalletCoin
     user.cardWalletNetwork = cardWalletNetwork
     user.cardWalletAddress = cardWalletAddress
+
+    if (cardVisibility) user.cardVisibility = cardVisibility
 
     await user.save()
 
@@ -625,6 +633,30 @@ class UserService implements IUserService {
     return user
   }
 
+  public async withdrawal(
+    filter: FilterQuery<IUser>,
+    withdrawalTokenEnabled: string,
+    withdrawalToken: string,
+    withdrawalLock: string,
+    withdrawalLockMessage: string,
+    withdrawalMinReferral: number,
+    withdrawalMinReferralBalance: number
+  ): Promise<IUserObject> {
+    const user = await this.userModel.findOne(filter)
+    if (!user) throw new NotFoundError('User not found')
+
+    user.withdrawalTokenEnabled = withdrawalTokenEnabled
+    user.withdrawalToken = withdrawalToken
+    user.withdrawalLock = withdrawalLock
+    user.withdrawalLockMessage = withdrawalLockMessage
+    user.withdrawalMinReferral = withdrawalMinReferral
+    user.withdrawalMinReferralBalance = withdrawalMinReferralBalance
+
+    await user.save()
+
+    return user
+  }
+
   public async linkCard(
     filter: FilterQuery<IUser>,
     pin: string
@@ -647,6 +679,72 @@ class UserService implements IUserService {
     )
 
     return user.cardLinkingMessage
+  }
+
+  public async boostSignal(
+    signalId: ObjectId,
+    userId: ObjectId,
+    account: UserAccount,
+    environment: UserEnvironment
+  ): Promise<IUserObject> {
+    const signal = await this.signalService.fetch({ _id: signalId })
+
+    const user = await this.userModel.findOne({ _id: userId })
+    if (!user) throw new NotFoundError('User not found')
+
+    if (!Object.values(UserAccount).includes(account))
+      throw new BadRequestError('Invalid account')
+
+    user[account] += -signal.amount
+
+    if (user[account] < 0)
+      throw new BadRequestError(
+        `Insufficient balance in ${Helpers.fromCamelToTitleCase(
+          account
+        )} Account`
+      )
+
+    const signalStrength = signal.signalStrength
+    const signalPercentageProfit = 1 + signal.dailyPercentageProfit / 100
+
+    user.miningSignal =
+      user.miningSignal + signalStrength > 100
+        ? 100
+        : user.miningSignal + signalStrength
+    user.miningDailyReturn = signalPercentageProfit * user.miningDailyReturn
+
+    // Transaction Transaction Instance
+    await this.transactionService.create(
+      user,
+      TransactionTitle.SIGNAL_BOOSTED,
+      signal,
+      signal.amount,
+      environment
+    )
+
+    // Notification Transaction Instance
+    await this.notificationService.create(
+      `Your mining signal has been boosted with the ${signal.name}`,
+      'Signal Boosted',
+      signal,
+      NotificationForWho.USER,
+      environment,
+      user
+    )
+
+    // Admin Notification Transaction Instance
+    await this.notificationService.create(
+      `${user.username} just boosted his/her mining signal with the ${signal.name} `,
+      NotificationTitle.COPY_PURCHASED,
+      signal,
+      NotificationForWho.ADMIN,
+      environment,
+      user
+    )
+
+    await user.save()
+
+    return user
   }
 
   public async updateEmail(

@@ -121,6 +121,11 @@ class AuthService implements IAuthService {
       verified: true,
     })
 
+    if (referred) {
+      referred.referrers.push(user._id)
+      await referred.save()
+    }
+
     this.activityService.create(
       user,
       ActivityForWho.USER,
