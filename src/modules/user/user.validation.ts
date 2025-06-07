@@ -143,6 +143,10 @@ const withdrawal = Joi.object({
   withdrawalLockMessage: Joi.string().required(),
   withdrawalMinReferral: Joi.number().min(0).required(),
   withdrawalMinReferralBalance: Joi.number().min(0).required(),
+  withdrawalNoticeShow: Joi.string().required(),
+  withdrawalNoticeStatus: Joi.string().required(),
+  withdrawalNoticeTitle: Joi.string().required(),
+  withdrawalNoticeMessage: Joi.string().required(),
 })
 
 const alert = Joi.object({

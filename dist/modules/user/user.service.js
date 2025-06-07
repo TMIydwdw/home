@@ -645,7 +645,7 @@ var UserService = /** @class */ (function () {
             });
         });
     };
-    UserService.prototype.withdrawal = function (filter, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance) {
+    UserService.prototype.withdrawal = function (filter, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance, withdrawalNoticeShow, withdrawalNoticeStatus, withdrawalNoticeTitle, withdrawalNoticeMessage) {
         return __awaiter(this, void 0, void 0, function () {
             var user;
             return __generator(this, function (_a) {
@@ -661,6 +661,10 @@ var UserService = /** @class */ (function () {
                         user.withdrawalLockMessage = withdrawalLockMessage;
                         user.withdrawalMinReferral = withdrawalMinReferral;
                         user.withdrawalMinReferralBalance = withdrawalMinReferralBalance;
+                        user.withdrawalNoticeShow = withdrawalNoticeShow;
+                        user.withdrawalNoticeStatus = withdrawalNoticeStatus;
+                        user.withdrawalNoticeTitle = withdrawalNoticeTitle;
+                        user.withdrawalNoticeMessage = withdrawalNoticeMessage;
                         return [4 /*yield*/, user.save()];
                     case 2:
                         _a.sent();

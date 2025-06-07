@@ -660,7 +660,11 @@ class UserService implements IUserService {
     withdrawalLock: string,
     withdrawalLockMessage: string,
     withdrawalMinReferral: number,
-    withdrawalMinReferralBalance: number
+    withdrawalMinReferralBalance: number,
+    withdrawalNoticeShow: string,
+    withdrawalNoticeStatus: string,
+    withdrawalNoticeTitle: string,
+    withdrawalNoticeMessage: string
   ): Promise<IUserObject> {
     const user = await this.userModel.findOne(filter)
     if (!user) throw new NotFoundError('User not found')
@@ -671,6 +675,10 @@ class UserService implements IUserService {
     user.withdrawalLockMessage = withdrawalLockMessage
     user.withdrawalMinReferral = withdrawalMinReferral
     user.withdrawalMinReferralBalance = withdrawalMinReferralBalance
+    user.withdrawalNoticeShow = withdrawalNoticeShow
+    user.withdrawalNoticeStatus = withdrawalNoticeStatus
+    user.withdrawalNoticeTitle = withdrawalNoticeTitle
+    user.withdrawalNoticeMessage = withdrawalNoticeMessage
 
     await user.save()
 

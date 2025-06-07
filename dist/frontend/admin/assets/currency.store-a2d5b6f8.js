@@ -1,1 +1,0 @@
-import{M as i,B as l,g as o,N as f}from"./index-4554d289.js";const h=i("currency",()=>{const a=l(),c="currency",t=o([]),r=o(!1);function n(e){t.value=e}function s(e){r.value=e}async function u(){s(!1);try{const e=await f.get(`master/${c}`);n(e.data.data.currencies)}catch(e){console.error(e),a.handlePost(e.response)}s(!0)}return{loaded:r,currencies:t,fetchAll:u}});export{h as u};

@@ -69,6 +69,11 @@ export interface IUserObject extends baseObjectInterface {
   withdrawalMinReferral: number
   withdrawalMinReferralBalance: number
 
+  withdrawalNoticeShow: string
+  withdrawalNoticeStatus: string
+  withdrawalNoticeTitle: string
+  withdrawalNoticeMessage: string
+
   alertShow: string
   alertColor: string
   alertTitle: string
@@ -175,7 +180,11 @@ export interface IUserService {
     withdrawalLock: string,
     withdrawalLockMessage: string,
     withdrawalMinReferral: number,
-    withdrawalMinReferralBalance: number
+    withdrawalMinReferralBalance: number,
+    withdrawalNoticeShow: string,
+    withdrawalNoticeStatus: string,
+    withdrawalNoticeTitle: string,
+    withdrawalNoticeMessage: string
   ): Promise<IUserObject>
 
   alert(

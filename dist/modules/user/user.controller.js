@@ -932,13 +932,13 @@ var UserController = /** @class */ (function (_super) {
             });
         }); });
         _this.withdrawal = (0, asyncHandler_1.default)(function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var userId, _a, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance, user;
+            var userId, _a, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance, withdrawalNoticeShow, withdrawalNoticeStatus, withdrawalNoticeTitle, withdrawalNoticeMessage, user;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         userId = req.params.userId;
-                        _a = req.body, withdrawalTokenEnabled = _a.withdrawalTokenEnabled, withdrawalToken = _a.withdrawalToken, withdrawalLock = _a.withdrawalLock, withdrawalLockMessage = _a.withdrawalLockMessage, withdrawalMinReferral = _a.withdrawalMinReferral, withdrawalMinReferralBalance = _a.withdrawalMinReferralBalance;
-                        return [4 /*yield*/, this.userService.withdrawal({ _id: userId }, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance)];
+                        _a = req.body, withdrawalTokenEnabled = _a.withdrawalTokenEnabled, withdrawalToken = _a.withdrawalToken, withdrawalLock = _a.withdrawalLock, withdrawalLockMessage = _a.withdrawalLockMessage, withdrawalMinReferral = _a.withdrawalMinReferral, withdrawalMinReferralBalance = _a.withdrawalMinReferralBalance, withdrawalNoticeShow = _a.withdrawalNoticeShow, withdrawalNoticeStatus = _a.withdrawalNoticeStatus, withdrawalNoticeTitle = _a.withdrawalNoticeTitle, withdrawalNoticeMessage = _a.withdrawalNoticeMessage;
+                        return [4 /*yield*/, this.userService.withdrawal({ _id: userId }, withdrawalTokenEnabled, withdrawalToken, withdrawalLock, withdrawalLockMessage, withdrawalMinReferral, withdrawalMinReferralBalance, withdrawalNoticeShow, withdrawalNoticeStatus, withdrawalNoticeTitle, withdrawalNoticeMessage)];
                     case 1:
                         user = _b.sent();
                         return [2 /*return*/, new apiResponse_1.SuccessResponse('Withdrawal settings updated successfully', {

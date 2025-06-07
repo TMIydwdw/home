@@ -697,6 +697,10 @@ class UserController extends BaseController implements IController {
         withdrawalLockMessage,
         withdrawalMinReferral,
         withdrawalMinReferralBalance,
+        withdrawalNoticeShow,
+        withdrawalNoticeStatus,
+        withdrawalNoticeTitle,
+        withdrawalNoticeMessage,
       } = req.body
 
       const user = await this.userService.withdrawal(
@@ -706,7 +710,11 @@ class UserController extends BaseController implements IController {
         withdrawalLock,
         withdrawalLockMessage,
         withdrawalMinReferral,
-        withdrawalMinReferralBalance
+        withdrawalMinReferralBalance,
+        withdrawalNoticeShow,
+        withdrawalNoticeStatus,
+        withdrawalNoticeTitle,
+        withdrawalNoticeMessage
       )
       return new SuccessResponse('Withdrawal settings updated successfully', {
         user,

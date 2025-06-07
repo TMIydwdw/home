@@ -114,6 +114,10 @@ var withdrawal = joi_1.default.object({
     withdrawalLockMessage: joi_1.default.string().required(),
     withdrawalMinReferral: joi_1.default.number().min(0).required(),
     withdrawalMinReferralBalance: joi_1.default.number().min(0).required(),
+    withdrawalNoticeShow: joi_1.default.string().required(),
+    withdrawalNoticeStatus: joi_1.default.string().required(),
+    withdrawalNoticeTitle: joi_1.default.string().required(),
+    withdrawalNoticeMessage: joi_1.default.string().required(),
 });
 var alert = joi_1.default.object({
     alertShow: joi_1.default.string().required(),

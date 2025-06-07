@@ -199,6 +199,18 @@ const UserSchema = new Schema<IUser>(
       type: Number,
       default: 0,
     },
+    withdrawalNoticeShow: {
+      type: String,
+    },
+    withdrawalNoticeStatus: {
+      type: String,
+    },
+    withdrawalNoticeTitle: {
+      type: String,
+    },
+    withdrawalNoticeMessage: {
+      type: String,
+    },
     alertShow: {
       type: String,
     },
