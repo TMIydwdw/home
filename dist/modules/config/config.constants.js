@@ -6,15 +6,15 @@ var SiteConstants = /** @class */ (function () {
     }
     var _a;
     _a = SiteConstants;
-    SiteConstants.siteName = 'Trade Mint Index';
-    SiteConstants.frontendLink = 'https://trademintindex.com/';
-    SiteConstants.siteLink = 'trademintindex.com';
-    SiteConstants.siteUrl = 'https://' + _a.siteLink + '/';
-    SiteConstants.siteApi = _a.siteUrl + 'api/';
-    SiteConstants.siteEmail = 'support@' + _a.siteLink;
-    SiteConstants.siteAddress = '';
-    SiteConstants.sitePhone = '';
-    SiteConstants.siteLogo = _a.siteUrl + 'images/logo.png';
+    SiteConstants.siteName = "Trade Mint Index";
+    SiteConstants.frontendLink = "https://trademintsindex.com/";
+    SiteConstants.siteLink = "trademintsindex.com";
+    SiteConstants.siteUrl = "https://" + _a.siteLink + "/";
+    SiteConstants.siteApi = _a.siteUrl + "api/";
+    SiteConstants.siteEmail = "support@" + _a.siteLink;
+    SiteConstants.siteAddress = "";
+    SiteConstants.sitePhone = "";
+    SiteConstants.siteLogo = _a.siteUrl + "images/logo.png";
     SiteConstants.mainBalance = 0;
     SiteConstants.referralBalance = 0;
     SiteConstants.demoBalance = 1000;
