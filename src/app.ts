@@ -5,15 +5,13 @@ import cors from 'cors'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import path from 'path'
-import cookieParser from 'cookie-parser'
+import fs from 'fs'
 import { referralSettingsService, transferSettingsService } from './setup'
 import mongoose, { Error } from 'mongoose'
 import { IController } from '@/core/utils'
-import { doubleCsrfProtection, invalidCsrfTokenError } from '@/helpers/csrf'
 import {
   ApiError,
   InternalError,
-  InvalidCsrfTokenError,
   MongooseCastError,
   NotFoundError,
   SchemaValidationError,
@@ -68,18 +66,12 @@ class App {
           'http://localhost:5174',
           'http://localhost:5175',
         ],
-        credentials: true,
       })
     )
     this.express.use(morgan('dev'))
     this.express.use(express.json())
     this.express.use(express.urlencoded({ extended: false }))
     this.express.use(compression())
-    this.express.use(cookieParser())
-    // if (!this.isTest) this.express.use(doubleCsrfProtection)
-    this.express.get('/api/token', (req, res, next) => {
-      res.json({ token: req.csrfToken && req.csrfToken() })
-    })
   }
 
   private initialiseControllers(controllers: IController[]): void {
@@ -89,208 +81,84 @@ class App {
   }
 
   private initialiseStatic(): void {
+    // Uploaded content (referenced from DB via /images/...)
     this.express.use('/images', express.static(path.join(__dirname, 'images')))
 
-    this.express.use('/css', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'css')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'css')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'css')
-        )(req, res, next)
+    const homeDir = path.join(__dirname, 'frontend', 'home')
+    const userDir = path.join(__dirname, 'frontend', 'user')
+    const adminDir = path.join(__dirname, 'frontend', 'admin')
+
+    // Startup diagnostics: the built SPAs must exist where the backend
+    // serves them from (`dist/frontend/*` in prod, `src/frontend/*` under
+    // ts-node). A missing bundle here means the frontend was not built
+    // (or `npm run copy-files` did not copy it) and the app would render
+    // blank. Fail loud in the logs instead of serving a broken page.
+    for (const [name, dir] of [
+      ['home', homeDir],
+      ['user', userDir],
+      ['admin', adminDir],
+    ] as Array<[string, string]>) {
+      try {
+        const files = fs.readdirSync(dir)
+        console.log(
+          `Serving ${name} SPA from ${dir} (${files.length} top-level entries)`
+        )
+        if (!files.includes('index.html')) {
+          console.error(`Missing index.html for ${name} SPA in ${dir}!`)
+        }
+      } catch (error) {
+        console.error(`Cannot serve ${name} SPA: directory missing: ${dir}`)
       }
+    }
+
+    // Path-based SPA serving (no cookies, backend owns the session via JWT):
+    //   /       -> home
+    //   /user   -> user dashboard
+    //   /admin  -> admin dashboard
+    // Each frontend is built with its own Vite `base` (/user/, /admin/),
+    // so its assets resolve under its own path prefix.
+    // Exact base paths are registered before the static mounts so they
+    // serve index.html directly (otherwise express.static 301-redirects
+    // `/user` -> `/user/` because it maps to a directory).
+    this.express.get('/user', (req, res) => {
+      res.sendFile(path.join(userDir, 'index.html'))
     })
 
-    this.express.use('/assets', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'assets')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'assets')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'assets')
-        )(req, res, next)
-      }
+    this.express.get('/admin', (req, res) => {
+      res.sendFile(path.join(adminDir, 'index.html'))
     })
 
-    this.express.use('/Edge', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'Edge')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'Edge')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'Edge')
-        )(req, res, next)
-      }
+    this.express.use('/user', express.static(userDir))
+    this.express.use('/admin', express.static(adminDir))
+    this.express.use('/', express.static(homeDir))
+
+    // Only page navigations get the SPA shell. Missing static assets must
+    // 404 loudly instead of returning index.html with 200 (browsers reject
+    // HTML served as CSS/JS and the app renders as a blank page).
+    // NOTE: `req.accepts('html')` alone is not enough - browsers request
+    // `<script>` tags with `Accept: */*`, which matches anything. So known
+    // asset extensions always fall through to the 404 handler. This is safe:
+    // no SPA route in these apps ends with one of these extensions (route
+    // tokens are hex, never dotted).
+    const isMissingAsset = (req: Request): boolean =>
+      /\.(css|js|mjs|map|png|jpe?g|gif|svg|ico|webp|avif|woff2?|ttf|eot|otf|mp4|webm|json|txt|xml)$/i.test(
+        req.path
+      )
+
+    this.express.get('/user/*', (req, res, next) => {
+      if (isMissingAsset(req) || !req.accepts('html')) return next()
+      res.sendFile(path.join(userDir, 'index.html'))
     })
 
-    this.express.use('/img', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'img')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'img')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'img')
-        )(req, res, next)
-      }
+    this.express.get('/admin/*', (req, res, next) => {
+      if (isMissingAsset(req) || !req.accepts('html')) return next()
+      res.sendFile(path.join(adminDir, 'index.html'))
     })
 
-    this.express.use('/images', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'images')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'images')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'images')
-        )(req, res, next)
-      }
-    })
-
-    this.express.use('/icon', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'icon')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'icon')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'icon')
-        )(req, res, next)
-      }
-    })
-
-    this.express.use('/icons', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'icons')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'icons')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'icons')
-        )(req, res, next)
-      }
-    })
-
-    this.express.use('/js', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'js')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'js')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'js')
-        )(req, res, next)
-      }
-    })
-
-    this.express.use('/svg', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'svg')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'svg')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'svg')
-        )(req, res, next)
-      }
-    })
-
-    this.express.use('/Trident', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'Trident')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'Trident')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'Trident')
-        )(req, res, next)
-      }
-    })
-
-    this.express.use('/vendor', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 'vendor')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 'vendor')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 'vendor')
-        )(req, res, next)
-      }
-    })
-
-    this.express.use('/s', (req, res, next) => {
-      if (req.cookies.request_code == '200') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'admin', 's')
-        )(req, res, next)
-      } else if (req.cookies.request_code == '100') {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'user', 's')
-        )(req, res, next)
-      } else {
-        express.static(
-          path.join(__dirname, '..', 'src', 'frontend', 'home', 's')
-        )(req, res, next)
-      }
-    })
-
-    this.express.get(/.*/, (req, res) => {
-      if (req.cookies.request_code == '200') {
-        res.sendFile(path.join(__dirname, 'frontend', 'admin', 'index.html'))
-      } else if (req.cookies.request_code == '100') {
-        res.sendFile(path.join(__dirname, 'frontend', 'user', 'index.html'))
-      } else {
-        res.sendFile(path.join(__dirname, 'frontend', 'home', 'index.html'))
-      }
+    this.express.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api')) return next()
+      if (isMissingAsset(req) || !req.accepts('html')) return next()
+      res.sendFile(path.join(homeDir, 'index.html'))
     })
   }
 
@@ -309,8 +177,6 @@ class App {
       (err: Error, req: Request, res: Response, next: NextFunction) => {
         if (err instanceof ApiError) {
           ApiError.handle(err, res)
-        } else if (err === invalidCsrfTokenError) {
-          ApiError.handle(new InvalidCsrfTokenError(), res)
         } else if (err instanceof ValidationError) {
           ApiError.handle(new SchemaValidationError(err), res)
         } else if (err instanceof Error.CastError) {

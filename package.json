@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist/",
-    "copy-files": "copyfiles -u 1 src/**/*.ejs src/images/**/* src/frontend/**/* dist/",
+    "copy-files": "copyfiles -u 1 \"src/**/*.ejs\" \"src/images/**/*\" \"src/frontend/**/*\" dist/",
     "start": "node dist/index.js",
     "dev": "npm run clean && npm run copy-files && tsc-watch --onSuccess \"node ./dist/index.js\"",
     "build": "npm run clean && npm run copy-files && tsc"

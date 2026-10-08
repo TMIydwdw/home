@@ -71,15 +71,9 @@ function googleTranslateElementInit() {
   let lang = url.searchParams.get('lang')
   if (lang) {
     console.log(lang)
-    Cookies.set('googtrans', `/en/${lang}`, { path: '' })
     Cookie.set('googtrans', `/en/${lang}`)
-    Cookies.set('googtrans', `/en/${lang}`, {
-      path: '',
-      domain: location.host,
-    })
   } else {
     Cookie.erase('googtrans')
-    Cookies.remove('googtrans', { path: '' })
   }
   new google.translate.TranslateElement(
     { pageLanguage: 'en' },
